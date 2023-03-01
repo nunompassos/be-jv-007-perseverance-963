@@ -58,4 +58,19 @@ public class AlunosController {
         aluno.setNome(request.getNome());
         return aluno;
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void apagarAluno(
+        @PathVariable final int id
+    ) {
+        final Aluno aluno = alunosDB
+            .stream()
+            .filter(it -> it.getId() == id)
+            .findFirst()
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado")
+            );
+        alunosDB.remove(aluno);
+    }
 }
