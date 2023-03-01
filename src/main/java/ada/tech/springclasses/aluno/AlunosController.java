@@ -42,4 +42,20 @@ public class AlunosController {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado")
             );
     }
+
+    @PutMapping("/{id}")
+    public Aluno atualizaraluno(
+        @PathVariable final int id,
+        @RequestBody final AlunoRequestDto request
+    ) {
+        final Aluno aluno = alunosDB
+            .stream()
+            .filter(it -> it.getId() == id)
+            .findFirst()
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado")
+            );
+        aluno.setNome(request.getNome());
+        return aluno;
+    }
 }
