@@ -2,6 +2,8 @@ package ada.tech.springclasses.aluno;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,7 @@ import ada.tech.springclasses.aluno.utils.AlunoId;
 @RequestMapping(path = {"/alunos"})
 public class AlunosController {
 
-    private List<Aluno> alunosDB = new ArrayList<>();
+    private final List<Aluno> alunosDB = new ArrayList<>();
 
     @PostMapping
     public Aluno criarAluno(
@@ -26,8 +28,14 @@ public class AlunosController {
     }
 
     @GetMapping
-    public List<Aluno> listarAlunos() {
-        return alunosDB;
+    public List<Aluno> listarAlunos(
+        @RequestParam final Optional<String> prefixo
+        ) {
+        return prefixo.map(s -> alunosDB
+            .stream()
+            .filter(it -> it.getNome().startsWith(s))
+            .collect(Collectors.toList()))
+            .orElse(alunosDB);
     }
 
     @GetMapping("/{id}")
