@@ -8,54 +8,46 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import ada.tech.springclasses.aluno.dto.AlunoRequestDto;
+import ada.tech.springclasses.aluno.dto.AlunoResponseDto;
 import ada.tech.springclasses.aluno.persistance.AlunoRepository;
 
 @RestController
 @RequestMapping(path = {"/alunos"})
 public class AlunosController {
 
-    final private AlunoRepository repositorio;
+    final private AlunoService servico;
 
-    public AlunosController(AlunoRepository repositorio) {
-        this.repositorio = repositorio;
+    public AlunosController(AlunoService servico) {
+        this.servico = servico;
     }
 
     @PostMapping
-    public Aluno criarAluno(
+    public AlunoResponseDto criarAluno(
         @RequestBody final AlunoRequestDto request
         ) {
-        final Aluno aluno = new Aluno();
-        aluno.setNome(request.getNome());
-        repositorio.save(aluno);
-        return aluno;
+        return servico.gravarAluno(request);
     }
 
     @GetMapping
-    public List<Aluno> listarAlunos(
+    public List<AlunoResponseDto> listarAlunos(
         @RequestParam final Optional<String> prefixo
         ) {
-        return repositorio.findAll();
+        return servico.listarAlunos(prefixo);
     }
 
     @GetMapping("/{id}")
-    public Aluno buscarAluno(
+    public AlunoResponseDto buscarAluno(
         @PathVariable("id") final int id
     ) {
-        return repositorio
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
+        return servico.buscarAluno(id);
     }
 
     @PutMapping("/{id}")
-    public Aluno atualizaraluno(
+    public AlunoResponseDto atualizaraluno(
         @PathVariable final int id,
         @RequestBody final AlunoRequestDto request
     ) {
-        final Aluno aluno = repositorio
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
-        aluno.setNome(request.getNome());
-        return repositorio.save(aluno);
+        return servico.atualizarAluno(id, request);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -63,6 +55,6 @@ public class AlunosController {
     public void apagarAluno(
         @PathVariable final int id
     ) {
-        repositorio.deleteById(id);
+        servico.apagarAluno(id);
     }
 }
