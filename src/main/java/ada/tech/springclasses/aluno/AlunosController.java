@@ -1,29 +1,32 @@
 package ada.tech.springclasses.aluno;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import ada.tech.springclasses.aluno.dto.AlunoRequestDto;
-import ada.tech.springclasses.aluno.utils.AlunoId;
+import ada.tech.springclasses.aluno.persistance.AlunoRepository;
 
 @RestController
 @RequestMapping(path = {"/alunos"})
 public class AlunosController {
 
-    private final List<Aluno> alunosDB = new ArrayList<>();
+    final private AlunoRepository repositorio;
+
+    public AlunosController(AlunoRepository repositorio) {
+        this.repositorio = repositorio;
+    }
 
     @PostMapping
     public Aluno criarAluno(
         @RequestBody final AlunoRequestDto request
         ) {
-        final Aluno aluno = new Aluno(AlunoId.incrementId(), request.getNome());
-        alunosDB.add(aluno);
+        final Aluno aluno = new Aluno();
+        aluno.setNome(request.getNome());
+        repositorio.save(aluno);
         return aluno;
     }
 
@@ -31,24 +34,16 @@ public class AlunosController {
     public List<Aluno> listarAlunos(
         @RequestParam final Optional<String> prefixo
         ) {
-        return prefixo.map(s -> alunosDB
-            .stream()
-            .filter(it -> it.getNome().startsWith(s))
-            .collect(Collectors.toList()))
-            .orElse(alunosDB);
+        return repositorio.findAll();
     }
 
     @GetMapping("/{id}")
     public Aluno buscarAluno(
         @PathVariable("id") final int id
     ) {
-        return alunosDB
-            .stream()
-            .filter(it -> it.getId() == id)
-            .findFirst()
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado")
-            );
+        return repositorio
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
     }
 
     @PutMapping("/{id}")
@@ -56,15 +51,11 @@ public class AlunosController {
         @PathVariable final int id,
         @RequestBody final AlunoRequestDto request
     ) {
-        final Aluno aluno = alunosDB
-            .stream()
-            .filter(it -> it.getId() == id)
-            .findFirst()
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado")
-            );
+        final Aluno aluno = repositorio
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
         aluno.setNome(request.getNome());
-        return aluno;
+        return repositorio.save(aluno);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -72,13 +63,6 @@ public class AlunosController {
     public void apagarAluno(
         @PathVariable final int id
     ) {
-        final Aluno aluno = alunosDB
-            .stream()
-            .filter(it -> it.getId() == id)
-            .findFirst()
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado")
-            );
-        alunosDB.remove(aluno);
+        repositorio.deleteById(id);
     }
 }
