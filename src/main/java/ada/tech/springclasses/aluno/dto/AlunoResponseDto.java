@@ -1,6 +1,6 @@
 package ada.tech.springclasses.aluno.dto;
 
-import ada.tech.springclasses.aluno.Aluno;
+import ada.tech.springclasses.aluno.persistance.Aluno;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

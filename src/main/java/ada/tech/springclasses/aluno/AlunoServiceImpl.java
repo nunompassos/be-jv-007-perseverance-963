@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ada.tech.springclasses.aluno.dto.AlunoRequestDto;
 import ada.tech.springclasses.aluno.dto.AlunoResponseDto;
+import ada.tech.springclasses.aluno.persistance.Aluno;
 import ada.tech.springclasses.aluno.persistance.AlunoRepository;
 
 @Service
