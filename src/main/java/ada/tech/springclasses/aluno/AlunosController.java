@@ -12,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import ada.tech.springclasses.aluno.dto.AlunoRequestDto;
 import ada.tech.springclasses.aluno.dto.AlunoResponseDto;
 import ada.tech.springclasses.aluno.persistance.AlunoRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @RestController
 @RequestMapping(path = {"/alunos"})
@@ -31,6 +33,7 @@ public class AlunosController {
     }
 
     @GetMapping
+    @SecurityRequirements
     public List<AlunoResponseDto> listarAlunos(
         @RequestParam final Optional<String> prefixo
         ) {
