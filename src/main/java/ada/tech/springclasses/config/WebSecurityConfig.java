@@ -2,10 +2,9 @@ package ada.tech.springclasses.config;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -36,6 +35,7 @@ public class WebSecurityConfig {
                 new AntPathRequestMatcher("/swagger-ui/**"),
                 new AntPathRequestMatcher("/v3/api-docs/**")
             ))).permitAll()
+            .and().authorizeRequests().antMatchers(HttpMethod.GET, "/alunos/**").permitAll()
             .and().authorizeRequests().anyRequest().authenticated()
             .and().httpBasic();
 
