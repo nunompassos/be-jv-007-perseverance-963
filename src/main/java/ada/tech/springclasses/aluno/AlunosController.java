@@ -3,6 +3,8 @@ package ada.tech.springclasses.aluno;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,7 +25,7 @@ public class AlunosController {
 
     @PostMapping
     public AlunoResponseDto criarAluno(
-        @RequestBody final AlunoRequestDto request
+        @Valid @RequestBody final AlunoRequestDto request
         ) {
         return servico.gravarAluno(request);
     }

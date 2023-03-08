@@ -1,5 +1,7 @@
-package ada.tech.springclasses.aluno.persistance;
+package ada.tech.springclasses.curso.persistance;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 import ada.tech.springclasses.disciplina.persistance.Disciplina;
@@ -13,13 +15,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "aluno")
-public class Aluno {
+public class Curso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nome;
-
-    @ManyToOne
-    private Disciplina disciplina;
+    private String descrição;
+    private int duracao;
+    @OneToMany(mappedBy = "curso", fetch = FetchType.EAGER)
+    private List<Disciplina> disciplinas = new ArrayList<>();
 }

@@ -1,8 +1,10 @@
-package ada.tech.springclasses.aluno.persistance;
+package ada.tech.springclasses.professor.persistance;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-import ada.tech.springclasses.disciplina.persistance.Disciplina;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +15,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "aluno")
-public class Aluno {
+public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nome;
-
-    @ManyToOne
-    private Disciplina disciplina;
 }
