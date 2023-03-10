@@ -21,5 +21,11 @@ import io.swagger.v3.oas.annotations.servers.Server;
     in = HEADER,
     scheme = "basic"
 )
+@SecurityScheme(
+    name = "JWT",
+    type = HTTP,
+    in = HEADER,
+    scheme = "jwt"
+)
 public class SwaggerConfig {
 }

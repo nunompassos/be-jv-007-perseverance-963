@@ -10,10 +10,8 @@
 	</parent>
 
 	<groupId>ada.tech</groupId>
-	<artifactId>spring-classes</artifactId>
+	<artifactId>spring</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-classes</name>
-	<description>Project for Perseverance Spring classes</description>
 
 	<properties>
 		<java.version>11</java.version>

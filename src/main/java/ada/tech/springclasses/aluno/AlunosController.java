@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ada.tech.springclasses.aluno.dto.AlunoRequestDto;
 import ada.tech.springclasses.aluno.dto.AlunoResponseDto;
 import ada.tech.springclasses.aluno.persistance.AlunoRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
@@ -47,6 +48,7 @@ public class AlunosController {
         return servico.buscarAluno(id);
     }
 
+    @SecurityRequirements(@SecurityRequirement(name = "JWT"))
     @PutMapping("/{id}")
     public AlunoResponseDto atualizaraluno(
         @PathVariable final int id,
