@@ -8,6 +8,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.annotations.Status;
+
 import ada.tech.alunos.dto.AlunoRequestDto;
 import ada.tech.alunos.dto.AlunoResponseDto;
 import ada.tech.alunos.model.Aluno;
@@ -26,46 +28,47 @@ public class AlunosController {
     }
 
     @GET
-    public Response buscarAlunos(@QueryParam("prefix") String prefix) {
-        return Response.ok(
-            prefix == null ?
-                alunos.stream().map(AlunoResponseDto::from).collect(Collectors.toList()) :
-                alunos.stream().filter(it -> it.getNome().startsWith(prefix)).map(AlunoResponseDto::from).collect(
-                Collectors.toList())
-        ).build();
+    public List<AlunoResponseDto> buscarAlunos(@QueryParam("prefix") Optional<String> prefix) {
+        return alunos
+            .stream()
+            .filter(it -> prefix.map(s -> it.getNome().startsWith(s)).orElse(true))
+            .map(AlunoResponseDto::from)
+            .collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("/{id}")
+    public AlunoResponseDto encontrarAluno(@PathParam("id") final int id) {
+        return alunos
+            .stream()
+            .filter(it -> it.getId() == id)
+            .map(AlunoResponseDto::from)
+            .findFirst()
+            .orElseThrow(NotFoundException::new);
     }
 
     @POST
-    public Response criarAluno (final AlunoRequestDto aluno) {
-        final int id = alunos.stream().mapToInt(Aluno::getId).max().orElse(0);
-        alunos.add(new Aluno(id, aluno.getNome()));
-        return Response
-            .status(Response.Status.CREATED)
-            .entity(alunos.get(alunos.size()-1))
-            .build();
+    public AlunoResponseDto criarAluno (final AlunoRequestDto request) {
+        final Aluno aluno = new Aluno(
+            alunos.stream().mapToInt(Aluno::getId).max().orElse(0),
+            request.getNome()
+        );
+        alunos.add(aluno);
+        return AlunoResponseDto.from(aluno);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response apagarAluno(@PathParam("id") int id) {
-        final Optional<Aluno> aluno = alunos.stream().filter(it -> it.getId() == id).findFirst();
-        if (aluno.isPresent()) {
-            alunos.remove(aluno.get());
-            return Response.ok(aluno.get()).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+    public void apagarAluno(@PathParam("id") int id) {
+        final Aluno aluno = alunos.stream().filter(it -> it.getId() == id).findFirst().orElseThrow(NotFoundException::new);
+        alunos.remove(aluno);
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarAluno(@PathParam("id") int id, final AlunoRequestDto request) {
-        final Optional<Aluno> aluno = alunos.stream().filter(it -> it.getId() == id).findFirst();
-        if (aluno.isPresent()) {
-            aluno.get().setNome(request.getNome());
-            return Response.ok(AlunoResponseDto.from(aluno.get())).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+    public AlunoResponseDto atualizarAluno(@PathParam("id") int id, final AlunoRequestDto request) {
+        final Aluno aluno = alunos.stream().filter(it -> it.getId() == id).findFirst().orElseThrow(NotFoundException::new);
+        aluno.setNome(request.getNome());
+        return AlunoResponseDto.from(aluno);
     }
 }
