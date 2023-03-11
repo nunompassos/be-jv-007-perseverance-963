@@ -17,16 +17,28 @@ import ada.tech.alunos.model.Aluno;
 @Consumes(MediaType.APPLICATION_JSON)
 public class AlunosController {
 
-    final private List<Aluno> alunos = new ArrayList();
+    final private List<Aluno> alunos = new ArrayList<>();
+
+    public AlunosController() {
+        alunos.add(new Aluno(0, "Ana"));
+        alunos.add(new Aluno(1, "Mario"));
+        alunos.add(new Aluno(2, "André"));
+    }
 
     @GET
-    public Response buscarAlunos() {
-        return Response.ok(alunos.stream().map(AlunoResponseDto::from).collect(Collectors.toList())).build();
+    public Response buscarAlunos(@QueryParam("prefix") String prefix) {
+        return Response.ok(
+            prefix == null ?
+                alunos.stream().map(AlunoResponseDto::from).collect(Collectors.toList()) :
+                alunos.stream().filter(it -> it.getNome().startsWith(prefix)).map(AlunoResponseDto::from).collect(
+                Collectors.toList())
+        ).build();
     }
 
     @POST
     public Response criarAluno (final AlunoRequestDto aluno) {
-        alunos.add(new Aluno(alunos.size(), aluno.getNome()));
+        final int id = alunos.stream().mapToInt(Aluno::getId).max().orElse(0);
+        alunos.add(new Aluno(id, aluno.getNome()));
         return Response
             .status(Response.Status.CREATED)
             .entity(alunos.get(alunos.size()-1))
@@ -40,6 +52,18 @@ public class AlunosController {
         if (aluno.isPresent()) {
             alunos.remove(aluno.get());
             return Response.ok(aluno.get()).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @PUT
+    @Path("/{id}")
+    public Response atualizarAluno(@PathParam("id") int id, final AlunoRequestDto request) {
+        final Optional<Aluno> aluno = alunos.stream().filter(it -> it.getId() == id).findFirst();
+        if (aluno.isPresent()) {
+            aluno.get().setNome(request.getNome());
+            return Response.ok(AlunoResponseDto.from(aluno.get())).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
