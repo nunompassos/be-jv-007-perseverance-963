@@ -11,6 +11,8 @@ import lombok.*;
 public class AlunoResponseDto {
     private int id;
     private String nome;
+    private String morada = "Rua do Lado";
+    private String nacionalidade = "BR";
 
     public static AlunoResponseDto from (Aluno aluno) {
         final AlunoResponseDtoBuilder response = new AlunoResponseDtoBuilder();

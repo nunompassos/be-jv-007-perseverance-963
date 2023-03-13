@@ -1,15 +1,25 @@
 package ada.tech.alunos.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.*;
+
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Aluno {
+@Entity
+@Table(name = "alunos")
+@NamedQueries({
+    @NamedQuery(name = "Aluno.getPorPrefixo",
+        query = "from Aluno where nome like ?1")
+})
+public class Aluno extends PanacheEntityBase {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nome;
 }
