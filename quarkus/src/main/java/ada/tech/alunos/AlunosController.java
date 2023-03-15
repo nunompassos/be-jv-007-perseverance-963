@@ -8,6 +8,8 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+
 import ada.tech.alunos.dto.AlunoRequestDto;
 import ada.tech.alunos.dto.AlunoResponseDto;
 import ada.tech.alunos.model.Aluno;
@@ -62,9 +64,10 @@ public class AlunosController {
     @DELETE
     @Path("/{id}")
     public void apagarAluno(@PathParam("id") int id) {
-        Aluno
+        System.out.println(repositorio.deleteById(id));
+        /*Aluno
             .findByIdOptional(id)
-            .orElseThrow(NotFoundException::new).delete();
+            .orElseThrow(NotFoundException::new).delete();*/
     }
 
     @Transactional
